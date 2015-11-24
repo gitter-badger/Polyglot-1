@@ -83,16 +83,16 @@ namespace Dimi.Polyglot.BLL
                                                       useCultureInLanguageCodeCfg.ToLower() == "true";
 
             IList<Language> languages = new List<Language>();
-            var umbracoLanguages =
-                umbraco.cms.businesslogic.language.Language.GetAllAsList();
+            var umbracoLanguages = Umbraco.Core.ApplicationContext.Current.Services.LocalizationService.GetAllLanguages().ToList();
+                //umbraco.cms.businesslogic.language.Language.GetAllAsList();
             var sequence = 0;
 
             foreach (var umbLanguage in umbracoLanguages)
             {
 
-                var isoCode = usingCultureInLanguageCode ? umbLanguage.CultureAlias : umbLanguage.CultureAlias.Substring(0, 2);
+                var isoCode = usingCultureInLanguageCode ? umbLanguage.CultureInfo.Name : umbLanguage.CultureInfo.Name.Substring(0, 2);
 
-                var description = forBackOffice ? umbLanguage.FriendlyName : CultureInfo.CreateSpecificCulture(umbLanguage.CultureAlias).NativeName;
+                var description = forBackOffice ? umbLanguage.CultureInfo.EnglishName : umbLanguage.CultureInfo.NativeName;
 
                 if (description.Contains('(') && !usingCultureInLanguageCode)
                 {
@@ -106,7 +106,7 @@ namespace Dimi.Polyglot.BLL
                                    {
                                        ISOCode = isoCode,
                                        Description = description + (appendLanguageCodes != "false" || forBackOffice ? " (" + isoCode + ")" : string.Empty),
-                                       CultureAlias = umbLanguage.CultureAlias,
+                                       CultureAlias = umbLanguage.CultureInfo.Name,
                                        Sequence = sequence
                                    };
                 languages.Add(language);
