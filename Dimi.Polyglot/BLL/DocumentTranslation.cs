@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
@@ -294,9 +295,7 @@ namespace Dimi.Polyglot.BLL
 
                         var translationContentTypeInstance = cts.GetContentType(translationContentType.Id.Value);
 
-                        if (!(from prop in translationContentTypeInstance.PropertyTypes
-                              where prop.Alias == LanguagePropertyAlias
-                              select prop).Any())
+                        if (!translationContentTypeInstance.PropertyTypeExists(LanguagePropertyAlias))
                             throw new Exception("Translation document type does not contain the '" + LanguagePropertyAlias +
                                                 "' (alias) property");
 
