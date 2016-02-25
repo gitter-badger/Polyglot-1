@@ -27,9 +27,12 @@ namespace Dimi.Polyglot.DAL
 
             rowList.InsertRange(0, db.Query<ContentTypePropertyInfo>(new Sql().Select("*").From("cmsPropertyType").Where("contentTypeId = @0", contentTypeId)).ToList());
 
-            var masterContentTypeId = db.SingleOrDefault<int>(new Sql().Select("parentContentTypeId").From("cmsContentType2ContentType").Where("childContentTypeId = @0", contentTypeId));
-
-            return masterContentTypeId == 0 ? rowList : GetPropertyList(masterContentTypeId, rowList);
+            var masterContentTypeIds = db.Query<int>(new Sql().Select("parentContentTypeId").From("cmsContentType2ContentType").Where("childContentTypeId = @0", contentTypeId));
+            foreach(var contId in masterContentTypeIds)
+            {
+                GetPropertyList(contId, rowList);
+            }
+            return rowList;
         }
     }
 }
