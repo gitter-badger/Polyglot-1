@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Configuration;
 using System.Linq;
-using System.Reflection;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
@@ -126,7 +125,7 @@ namespace Dimi.Polyglot.BLL
                 else
                 {
 
-                    var folder = ApplicationContext.Current.Services.ContentService.CreateContent(TranslationFolderName, nodeDoc.Id, contentType.Alias);
+                    var folder = ApplicationContext.Current.Services.ContentService.CreateContent(TranslationFolderName, nodeDoc.Id, contentType.Alias, Umbraco.Web.UmbracoContext.Current.Security.CurrentUser.Id);
 
                     var folderProperties = ContentType.GetPropertyList(contentType.Id);
 
@@ -136,7 +135,7 @@ namespace Dimi.Polyglot.BLL
                         folder.Properties.Single(x => x.Alias == GetHideFromNavigationPropertyAlias()).Value = true;
                     }
                     
-                    ApplicationContext.Current.Services.ContentService.Save(folder);
+                    ApplicationContext.Current.Services.ContentService.Save(folder, Umbraco.Web.UmbracoContext.Current.Security.CurrentUser.Id);
 
                     return true;
                 }
@@ -190,7 +189,7 @@ namespace Dimi.Polyglot.BLL
                 {
                     var translationFolderContentType = ApplicationContext.Current.Services.ContentTypeService.GetContentType(translationFolder.ContentType.Id);
                     var translationNodeContentType = translationFolderContentType.AllowedContentTypes.First();
-                    var langNode = ApplicationContext.Current.Services.ContentService.CreateContent(languageISOCode, translationFolder, translationNodeContentType.Alias);
+                    var langNode = ApplicationContext.Current.Services.ContentService.CreateContent(languageISOCode, translationFolder, translationNodeContentType.Alias, Umbraco.Web.UmbracoContext.Current.Security.CurrentUser.Id);
                     var node = ApplicationContext.Current.Services.ContentService.GetById(nodeID);
                     try
                     {
@@ -210,7 +209,7 @@ namespace Dimi.Polyglot.BLL
                         throw new Exception("NoLangProp");
                     }
                     
-                    ApplicationContext.Current.Services.ContentService.Save(langNode);
+                    ApplicationContext.Current.Services.ContentService.Save(langNode, Umbraco.Web.UmbracoContext.Current.Security.CurrentUser.Id);
 
                     var langNodeProperties =
                         ContentType.GetPropertyList(translationNodeContentType.Id.Value);
